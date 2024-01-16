@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+
+    environment {
+        registry = 'https://10.8.0.4:2375'  // Используйте HTTPS
+        imageName = 'my-docker-website'
+        imageTag = 'latest'
+        dockerHost = 'tcp://10.8.0.4:2375'
+        dockerCertPath = '/path/to/docker/certificates'
+        containerName = 'my-docker-container'
+    }
+
+    stages {
+        stage('Run Docker Container') {
+            steps {
+                echo "Using Docker Host: $dockerHost"
+                echo "Using Docker Certificates Path: $dockerCertPath"
+
+                script {
+                    docker.withServer(dockerHost, dockerCertPath) {
+                        // Остановка предыдущего контейнера, если он существует
+                        sh "docker stop ${containerName} || true"
+                        sh "docker rm ${containerName} || true"
+
+                        // Запуск нового Docker контейнера
+                        sh "docker run -d -p 80:80 --name ${containerName} ${imageName}:${imageTag}"
+                    }
+                }
+            }
+        }
+    }
+}
