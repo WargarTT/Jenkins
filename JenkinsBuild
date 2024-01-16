@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    environment {
+        registry = 'https://10.8.0.4:2375'  // Используйте HTTPS
+        imageName = 'my-docker-website'
+        imageTag = 'latest'
+        dockerHost = 'tcp://10.8.0.4:2375'
+        dockerCertPath = '/path/to/docker/certificates'
+        dockerfilePath = 'https://raw.githubusercontent.com/WargarTT/Jenkins/main/Dockerfile'
+    }
+
+    stages {
+        stage('Build and Push Docker Image') {
+            steps {
+                echo "Using Docker Host: $dockerHost"
+                echo "Using Docker Certificates Path: $dockerCertPath"
+
+                script {
+                    docker.withServer(dockerHost, dockerCertPath) {
+                        sh "curl -o Dockerfile ${dockerfilePath}"
+
+                        def customImage = docker.build("${imageName}:${imageTag}", '.')
+                       
+                    }
+                }
+            }
+        }
+    }
+}
