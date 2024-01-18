@@ -23,7 +23,7 @@ pipeline {
                         sh "docker rm ${containerName} || true"
 
                         // Запуск нового Docker контейнера
-                        sh "docker run -d -p 80:80 --name ${containerName} ${imageName}:${imageTag}"
+                        sh "docker run -d -p 3030:80 --name ${containerName} ${imageName}:${imageTag}"
                     }
                 }
             }
